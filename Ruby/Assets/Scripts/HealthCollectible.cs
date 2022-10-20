@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class HealthCollectible : MonoBehaviour
 {
+    public AudioClip collectedClip;
     void OnTriggerEnter2D(Collider2D other) //phát hiện các collider Trigger đưa vào other
     {
         RubyController controller = other.GetComponent<RubyController>(); //collider lấy liên kết tới component Ruby
@@ -14,6 +15,8 @@ public class HealthCollectible : MonoBehaviour
             {
                 controller.ChangeHealth(1);
                 Destroy(gameObject);
+
+                controller.PlaySound(collectedClip);
             }
         }
     }    

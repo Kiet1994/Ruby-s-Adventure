@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemyController : MonoBehaviour
-{
-   
+{   
     public float speed;
     public bool vertical;
     public float changeTime = 3.0f;
@@ -13,15 +12,32 @@ public class EnemyController : MonoBehaviour
     float timer;
     int direction = 1;
 
+    Animator animator;
+
+    public AudioClip fixedAudio;
+    AudioSource audioSource;
+
+    bool broken = true;
+
+    public ParticleSystem smokeEffect;
+
     // Start is called before the first frame update
     void Start()
     {
+        smokeEffect = GetComponentInChildren<ParticleSystem>();
         rigidbody2D = GetComponent<Rigidbody2D>();
         timer = changeTime;
+        animator = GetComponent<Animator>();
+        audioSource = GetComponentInChildren<AudioSource>();
     }
 
     void Update()
     {
+        if (!broken)
+        {
+            return;
+        }
+
         timer -= Time.deltaTime;
 
         if (timer < 0)
@@ -33,15 +49,24 @@ public class EnemyController : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (!broken)
+        {
+            return;
+        }
+
         Vector2 position = rigidbody2D.position;
 
         if (vertical)
         {
-            position.y = position.y + Time.deltaTime * speed * direction; ;
+            position.y = position.y + Time.deltaTime * speed * direction;
+            animator.SetFloat("Move X", 0);
+            animator.SetFloat("Move Y", direction);
         }
         else
         {
-            position.x = position.x + Time.deltaTime * speed * direction; ;
+            position.x = position.x + Time.deltaTime * speed * direction;
+            animator.SetFloat("Move X", direction);
+            animator.SetFloat("Move Y", 0);
         }
 
         rigidbody2D.MovePosition(position);
@@ -55,5 +80,19 @@ public class EnemyController : MonoBehaviour
         {
             player.ChangeHealth(-1);
         }
+    }
+    public void Fix()
+    {
+        broken = false;
+        rigidbody2D.simulated = false;
+        //gameObject.SetActive(false);
+        animator.SetTrigger("Fixed");
+        smokeEffect.Stop();
+        audioSource.Stop();
+        PlaySound(fixedAudio);
+    }
+    public void PlaySound(AudioClip clip)
+    {
+        audioSource.PlayOneShot(clip);
     }
 }
