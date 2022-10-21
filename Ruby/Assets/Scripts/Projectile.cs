@@ -5,6 +5,7 @@ using UnityEngine;
 public class Projectile : MonoBehaviour
 {
     Rigidbody2D rigidbody2d;
+    [SerializeField] private float bulletDistance =20;
 
     void Awake()
     {
@@ -13,9 +14,9 @@ public class Projectile : MonoBehaviour
     void Update()
     {
         // xoá đạn bay quá xa.
-        if (transform.position.magnitude > 1000.0f)
+        if (transform.position.magnitude > bulletDistance)
         {
-            Destroy(gameObject);
+            DestroyProjectile();
         }
     }
     public void Launch(Vector2 direction, float force)
@@ -28,7 +29,17 @@ public class Projectile : MonoBehaviour
         if (enemy != null)
         {
             enemy.Fix();
+            DestroyProjectile();
         }
-        Destroy(gameObject); //va chạm xoá đạn
+        if (other != null)
+        {
+            DestroyProjectile();
+        }
+             
+    }
+    private void DestroyProjectile()
+    {
+        Destroy(gameObject);
+        RubyController.instance.addBullet();
     }
 }

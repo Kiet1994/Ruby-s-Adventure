@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class RubyController : MonoBehaviour
 {
+    public static RubyController instance { get; private set; }
+
     public float speed = 3.0f;
 
     public int maxHealth = 5;
-    
-
     public int health { get { return currentHealth; } } //khi currentHealth thay đổi thì health thay đổi
     int currentHealth;
 
@@ -28,16 +28,25 @@ public class RubyController : MonoBehaviour
     private AudioSource audioSource;
     public AudioClip throwCog;
     public AudioClip hit;
+    //Attack
+    [SerializeField] private int attackSpeed = 300;
+    [SerializeField] private float attackCooldown = 0.5f;
+    [SerializeField] private int maxBullet = 20;
+    float cooldownTimer = Mathf.Infinity;
+    [SerializeField] private int remainingBullet;
 
-    // Start is called before the first frame update
+    void Awake()
+    {
+        instance = this;
+    }
     void Start()
     {
         //Debug.Log(isInvincible);
         rigidbody2d = GetComponent<Rigidbody2D>();
         currentHealth = maxHealth;
         animator = GetComponent<Animator>();
-
         audioSource = GetComponent<AudioSource>();
+        remainingBullet = maxBullet;
     }
 
     // Update is called once per frame
@@ -66,7 +75,9 @@ public class RubyController : MonoBehaviour
                 isInvincible = false;
         }
         // shoot
-        if (Input.GetKeyDown(KeyCode.C))
+        cooldownTimer += Time.deltaTime;
+
+        if (Input.GetKey(KeyCode.C) && cooldownTimer > attackCooldown && remainingBullet >= 0)
         {
             Launch();
             PlaySound(throwCog);
@@ -116,12 +127,17 @@ public class RubyController : MonoBehaviour
     }
     void Launch()
     {
+        cooldownTimer = 0;
+        remainingBullet = Mathf.Clamp(remainingBullet - 1, 0, maxBullet);
         GameObject projectileObject = Instantiate(projectilePrefab, rigidbody2d.position + Vector2.up * 0.5f, Quaternion.identity);
-
         Projectile projectile = projectileObject.GetComponent<Projectile>();
-        projectile.Launch(lookDirection, 300);
+        projectile.Launch(lookDirection, attackSpeed);
 
         animator.SetTrigger("Launch");
+    }
+    public void addBullet()
+    {
+        remainingBullet = Mathf.Clamp(remainingBullet + 1, 0, maxBullet);
     }
     public void PlaySound(AudioClip clip)
     {
