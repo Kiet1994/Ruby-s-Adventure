@@ -29,9 +29,10 @@ public class RubyController : MonoBehaviour
     public AudioClip throwCog;
     public AudioClip hit;
     //Attack
-    [SerializeField] private int attackSpeed = 300;
-    [SerializeField] private float attackCooldown = 0.5f;
+    [SerializeField] private int force = 300;
+    [SerializeField] private int attackSpeed = 5;    
     [SerializeField] private int maxBullet = 20;
+    float attackCooldown = 1;
     float cooldownTimer = Mathf.Infinity;
     [SerializeField] private int remainingBullet;
 
@@ -46,6 +47,7 @@ public class RubyController : MonoBehaviour
         currentHealth = maxHealth;
         animator = GetComponent<Animator>();
         audioSource = GetComponent<AudioSource>();
+
         remainingBullet = maxBullet;
     }
 
@@ -79,6 +81,7 @@ public class RubyController : MonoBehaviour
 
         if (Input.GetKey(KeyCode.C) && cooldownTimer > attackCooldown && remainingBullet >= 1)
         {
+            attackCooldown = 1f / attackSpeed;
             Launch();
             PlaySound(throwCog);
         }
@@ -131,7 +134,7 @@ public class RubyController : MonoBehaviour
         remainingBullet = Mathf.Clamp(remainingBullet - 1, 0, maxBullet);
         GameObject projectileObject = Instantiate(projectilePrefab, rigidbody2d.position + Vector2.up * 0.5f, Quaternion.identity);
         Projectile projectile = projectileObject.GetComponent<Projectile>();
-        projectile.Launch(lookDirection, attackSpeed);
+        projectile.Launch(lookDirection, force);
 
         animator.SetTrigger("Launch");
     }

@@ -107,9 +107,9 @@ MonoBehaviour:
   projectilePrefab: {fileID: 2421218784655887147, guid: 4c437aff499a8d64fb7984716b8b616b, type: 3}
   throwCog: {fileID: 8300000, guid: b2edfd40873655249ba0e01a5cf705be, type: 3}
   hit: {fileID: 8300000, guid: ae904c7305df7344d86b2092c0cb3a26, type: 3}
-  attackSpeed: 600
-  attackCooldown: 0.2
-  maxBullet: 10
+  force: 600
+  attackSpeed: 5
+  maxBullet: 15
   remainingBullet: 0
 --- !u!50 &4853543846755035831
 Rigidbody2D:
