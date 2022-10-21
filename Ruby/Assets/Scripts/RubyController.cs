@@ -77,7 +77,7 @@ public class RubyController : MonoBehaviour
         // shoot
         cooldownTimer += Time.deltaTime;
 
-        if (Input.GetKey(KeyCode.C) && cooldownTimer > attackCooldown && remainingBullet >= 0)
+        if (Input.GetKey(KeyCode.C) && cooldownTimer > attackCooldown && remainingBullet >= 1)
         {
             Launch();
             PlaySound(throwCog);
